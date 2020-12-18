@@ -54,15 +54,15 @@ function encryptFile ()
       $passwordFile = "./.temp";
       file_put_contents($passwordFile, $pwd);
     }
-    process("openssl enc -in export.json -aes-256-cbc -kfile " . $passwordFile. " > " . $exportFilePath . ".encrypted");
+    process("openssl enc -in export.json -aes-256-cbc -md md5 -kfile " . $passwordFile. " > " . $exportFilePath . ".encrypted");
     if ("" == $passwordFileGiven) {
       unlink($passwordFile);
     }
 
     printf ("%s\n", "Export file has been encrypted, to decrypt it whith prompted asking password : ");
-    printf ("%s\n", "openssl enc -in " . $exportFilePath . ".encrypted -d -aes-256-cbc -pass stdin > " . $exportFilePath);
+    printf ("%s\n", "openssl enc -in " . $exportFilePath . ".encrypted -d -aes-256-cbc -md md5 -pass stdin > " . $exportFilePath);
     printf ("%s\n", "To decrypt it giving a password file : ");
-    printf ("%s\n", "openssl enc -in " . $exportFilePath . ".encrypted -d -aes-256-cbc -kfile [path-to-password-file] > " . $exportFilePath);
+    printf ("%s\n", "openssl enc -in " . $exportFilePath . ".encrypted -d -aes-256-cbc -md md5 -kfile [path-to-password-file] > " . $exportFilePath);
 
 }
 /**
@@ -156,6 +156,7 @@ if ($debug) {
 
 file_put_contents($exportFilePath, json_encode($secrets, JSON_PRETTY_PRINT));
 encryptFile();
+unlink($exportFilePath);
 
 if ($proc["stderr"] != "") {
     echo "\nERR: ".$proc["stderr"];
